@@ -8,6 +8,13 @@ describe('Ship', () => {
   });
 
   it('Is it sunk?', () => {
-    expect(boat.isSunk()).toBe(false);
+    expect(boat.isSunk()).not.toBeTruthy();
+  });
+
+  it('Can I sink it?', () => {
+    boat.hit();
+    boat.hit();
+    boat.hit();
+    expect(boat.isSunk()).toBeTruthy();
   });
 });

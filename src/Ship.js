@@ -7,13 +7,11 @@ export default class Ship {
   }
 
   hit() {
-    this.hits += 1;
+    if (!this.isSunk()) this.hits += 1;
     return this.hits;
   }
 
   isSunk() {
-    // currently, hits can go past the length.
-    // need to figure out best practice to avoid that
     if (this.hits === this.length) return true;
     return false;
   }
