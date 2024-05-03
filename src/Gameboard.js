@@ -34,13 +34,12 @@ export default class Gameboard {
 
   // have directioncheck take callbacks?
 
-  directionCheck(dir, callback, length, startArray) {
+  static #directionCheck(dir, callback, length, startArray) {
     if (dir === 'vertical') return callback(length, startArray[1]);
     return callback(length, startArray[0]);
   }
 
   calcWithinBounds(length, start) {
-    // why is board.length undefined?!
     const boardLength = this.board.length;
     if (start >= 0 && start + length <= boardLength) return true;
     return false;
@@ -48,7 +47,7 @@ export default class Gameboard {
 
   withinBounds(dir, length, startArray) {
     const calc = this.calcWithinBounds.bind(this);
-    return this.directionCheck(dir, calc, length, startArray);
+    return Gameboard.#directionCheck(dir, calc, length, startArray);
   }
 
   placeShip(indxStartShip, dir, startX, startY) {
