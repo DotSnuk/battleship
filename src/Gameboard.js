@@ -5,7 +5,6 @@ export default class Gameboard {
   constructor() {
     this.board = Gameboard.#createBoard();
     this.listStartships = Gameboard.#getListShips();
-    // this.unplacedShips = Gameboard.#getShips();
     // missed shots. on this board?
   }
 
@@ -32,20 +31,11 @@ export default class Gameboard {
     return starterShips;
   }
 
-  static #directionCheck(dir, callback, length, startArray) {
-    if (dir === 'vertical') return callback(length, startArray[1]);
-    return callback(length, startArray[0]);
-  }
-
-  #calcWithinBounds(length, start) {
-    const boardLength = this.board.length;
-    if (start >= 0 && start + length <= boardLength) return true;
-    return false;
-  }
-
   #withinBounds(dir, length, startArray) {
-    const calcBounds = this.#calcWithinBounds.bind(this);
-    return Gameboard.#directionCheck(dir, calcBounds, length, startArray);
+    const boardLength = this.board.length;
+    if (dir === 'vertical')
+      return startArray[1] >= 0 && startArray[1] + length <= boardLength;
+    return startArray[0] >= 0 && startArray[0] + length <= boardLength;
   }
 
   getNodes(dir, length, startArray) {
@@ -61,16 +51,23 @@ export default class Gameboard {
     return indxFromVertical;
   }
 
-  spaceAvailable(dir, length, startArray) {
-    const nodes = this.getNodes(dir, length, startArray);
-    return nodes.every(node => node.ship === null);
+  spaceAvailable(nodes, dir, length, startArray) {
+    return (
+      this.#withinBounds(dir, length, startArray) &&
+      nodes.every(node => node.ship === null)
+    );
   }
 
   placeShip(indxStartShip, dir, startX, startY) {
-    // I can first do the checks to see if it fits before creating the ship
-    const shipParam = this.listStartships[indxStartShip];
-    if (this.#withinBounds(dir, shipParam[1], [startX, startY])) return true;
-    return false;
-    // const ship = new Ship(name, length);
+    const lngth = this.listStartships[indxStartShip][1];
+    const nodes = this.getNodes(dir, lngth, [startX, startY]);
+    if (!this.spaceAvailable(nodes, dir, lngth, [startX, startY])) return false;
+    const shipPara = this.listStartships.splice(indxStartShip, 1).flat();
+    const ship = new Ship(shipPara[0], shipPara[1]);
+    nodes.forEach(node => {
+      const nod = node;
+      nod.ship = ship;
+    });
+    return true;
   }
 }
