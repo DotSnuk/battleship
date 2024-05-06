@@ -31,6 +31,14 @@ export default class Gameboard {
     return starterShips;
   }
 
+  static #translateCoords(arr) {
+    let x = arr[0].toUpperCase();
+    x = x.charCodeAt(0) - 65;
+    let y = arr[1];
+    y -= 1;
+    return [x, y];
+  }
+
   #withinBounds(dir, length, startArray) {
     const boardLength = this.board.length;
     if (dir === 'vertical')
@@ -59,9 +67,11 @@ export default class Gameboard {
   }
 
   placeShip(indxStartShip, dir, startX, startY) {
+    // throw error if listStartships length === 0?
+    const coords = Gameboard.#translateCoords([startX, startY]);
     const lngth = this.listStartships[indxStartShip][1];
-    const nodes = this.getNodes(dir, lngth, [startX, startY]);
-    if (!this.spaceAvailable(nodes, dir, lngth, [startX, startY])) return false;
+    const nodes = this.getNodes(dir, lngth, coords);
+    if (!this.spaceAvailable(nodes, dir, lngth, coords)) return false;
     const shipPara = this.listStartships.splice(indxStartShip, 1).flat();
     const ship = new Ship(shipPara[0], shipPara[1]);
     nodes.forEach(node => {
