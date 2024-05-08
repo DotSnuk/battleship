@@ -4,8 +4,8 @@ import Ship from './Ship';
 export default class Gameboard {
   constructor() {
     this.board = Gameboard.#createBoard();
-    this.listStartships = Gameboard.#getListShips();
-    // this.missedIncomingAttacks = [];
+    this.listStartShips = Gameboard.#getListShips();
+    this.listActiveShips = [];
   }
 
   static #createBoard() {
@@ -77,12 +77,12 @@ export default class Gameboard {
   }
 
   placeShip(indxStartShip, dir, startX, startY) {
-    // throw error if listStartships length === 0?
+    // throw error if listStartShips length === 0?
     const coords = Gameboard.#translateCoords([startX, startY]);
-    const lngth = this.listStartships[indxStartShip][1];
+    const lngth = this.listStartShips[indxStartShip][1];
     const nodes = this.getNodes(dir, lngth, coords);
     if (!this.spaceAvailable(nodes, dir, lngth, coords)) return false;
-    const shipPara = this.listStartships.splice(indxStartShip, 1).flat();
+    const shipPara = this.listStartShips.splice(indxStartShip, 1).flat();
     const ship = new Ship(shipPara[0], shipPara[1]);
     nodes.forEach(node => {
       const nod = node;
