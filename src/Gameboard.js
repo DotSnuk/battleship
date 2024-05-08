@@ -5,7 +5,7 @@ export default class Gameboard {
   constructor() {
     this.board = Gameboard.#createBoard();
     this.listStartships = Gameboard.#getListShips();
-    // missed shots. on this board?
+    // this.missedIncomingAttacks = [];
   }
 
   static #createBoard() {
@@ -46,6 +46,16 @@ export default class Gameboard {
     return startArray[0] >= 0 && startArray[0] + length <= boardLength;
   }
 
+  getMissedAttacks() {
+    const missedAttacks = [];
+    this.board.forEach((y, yIndx) => {
+      y.forEach((x, xIndx) => {
+        if (x.beenHit && !x.hasShip()) missedAttacks.push([xIndx, yIndx]);
+      });
+    });
+    return missedAttacks;
+  }
+
   getNodes(dir, length, startArray) {
     if (dir === 'vertical')
       return this.board[startArray[0]].slice(
@@ -79,5 +89,23 @@ export default class Gameboard {
       nod.ship = ship;
     });
     return true;
+  }
+
+  // logMissedAttack(coords) {
+  //   this.missedIncomingAttacks.push(coords);
+  // }
+
+  receiveAttack(x, y) {
+    const coords = Gameboard.#translateCoords([x, y]);
+    const node = this.board[coords[0]][coords[1]];
+    // some check to see if it has been hit
+    node.beenHit = true;
+    if (node.hasShip()) {
+      const { ship } = node;
+      ship.hit();
+      return true;
+    }
+    // this.logMissedAttack(coords);
+    return false;
   }
 }
