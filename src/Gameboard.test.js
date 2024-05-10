@@ -4,10 +4,6 @@ import Node from './node';
 describe('Gameboard', () => {
   const board = new Gameboard();
 
-  // it('Test within bounds', () => {
-  //   expect(board.withinBounds('vertical', 3, [5, 5])).toBeTruthy();
-  // });
-
   it('test board', () => {
     expect(board.board.length).toBe(10);
   });
@@ -46,5 +42,43 @@ describe('Gameboard', () => {
     board.receiveAttack('A', 1);
     const missedAttack = board.getMissedAttacks();
     expect(missedAttack.length).toBe(2);
+  });
+
+  // make test for allShipSunk
+});
+
+describe('All ships sunk', () => {
+  const board = new Gameboard();
+  for (let i = 0; i < 5; i += 1) {
+    board.placeShip(0, 'horizontal', 'B', i + 1);
+  }
+  const allShips =
+    board.listStartShips.length === 0 && board.listActiveShips.length === 5;
+
+  it('All ships placed', () => {
+    expect(allShips).toBeTruthy();
+  });
+
+  it('No attacks, allShipsSunk should be false', () => {
+    expect(board.allShipsSunk()).toBeFalsy();
+  });
+
+  it('Attack all ships, all should be sunk', () => {
+    for (let i = 0; i < 5; i += 1) {
+      board.receiveAttack(String.fromCharCode(66 + i), 1);
+    }
+    for (let i = 0; i < 4; i += 1) {
+      board.receiveAttack(String.fromCharCode(66 + i), 2);
+    }
+    for (let i = 0; i < 3; i += 1) {
+      board.receiveAttack(String.fromCharCode(66 + i), 3);
+    }
+    for (let i = 0; i < 3; i += 1) {
+      board.receiveAttack(String.fromCharCode(66 + i), 4);
+    }
+    for (let i = 0; i < 2; i += 1) {
+      board.receiveAttack(String.fromCharCode(66 + i), 5);
+    }
+    expect(board.allShipsSunk()).toBeTruthy();
   });
 });

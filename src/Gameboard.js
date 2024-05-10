@@ -56,6 +56,10 @@ export default class Gameboard {
     return missedAttacks;
   }
 
+  allShipsSunk() {
+    return this.listActiveShips.every(ship => ship.isSunk());
+  }
+
   getNodes(dir, length, startArray) {
     if (dir === 'vertical')
       return this.board[startArray[0]].slice(
@@ -84,16 +88,13 @@ export default class Gameboard {
     if (!this.spaceAvailable(nodes, dir, lngth, coords)) return false;
     const shipPara = this.listStartShips.splice(indxStartShip, 1).flat();
     const ship = new Ship(shipPara[0], shipPara[1]);
+    this.listActiveShips.push(ship);
     nodes.forEach(node => {
       const nod = node;
       nod.ship = ship;
     });
     return true;
   }
-
-  // logMissedAttack(coords) {
-  //   this.missedIncomingAttacks.push(coords);
-  // }
 
   receiveAttack(x, y) {
     const coords = Gameboard.#translateCoords([x, y]);
