@@ -99,14 +99,12 @@ export default class Gameboard {
   receiveAttack(x, y) {
     const coords = Gameboard.#translateCoords([x, y]);
     const node = this.board[coords[0]][coords[1]];
-    // some check to see if it has been hit
     node.beenHit = true;
     if (node.hasShip()) {
       const { ship } = node;
       ship.hit();
       return true;
     }
-    // this.logMissedAttack(coords);
     return false;
   }
 }
