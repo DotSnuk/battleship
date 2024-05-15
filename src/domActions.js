@@ -19,14 +19,22 @@ export function greeter() {
     const div = document.createElement('div');
     const input = document.createElement('input');
     input.setAttribute('type', 'text');
+    input.classList.add('name');
+    input.placeholder = `Player ${i + 1}`;
     div.classList.add(`player${i + 1}`);
     div.appendChild(input);
     // make the slider later, stick with checkbox for now
     const checkbox = document.createElement('input');
     checkbox.setAttribute('type', 'checkbox');
+    checkbox.classList.add('computer');
     div.appendChild(checkbox);
     wrapper.appendChild(div);
   }
   wrapper.classList.add('wrapper');
+  const begin = document.createElement('input');
+  begin.setAttribute('type', 'button');
+  begin.value = 'Begin';
+  begin.id = 'begin';
+  wrapper.appendChild(begin);
   cont.appendChild(wrapper);
 }

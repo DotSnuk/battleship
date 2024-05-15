@@ -24,6 +24,27 @@ body {
 }
 
 .wrapper {
+  display: flex;
+  flex-direction: column;
   border: 1px solid black;
   width: 50%;
+}
+
+.wrapper div[class^='player'] {
+  display: flex;
+  padding: 2px;
+}
+
+input.name {
+  height: 30px;
+  width: 80%;
+}
+
+#begin {
+  align-self: center;
+  margin: 5px;
+  width: 10%;
+}
+
+input[type='checkbox'] {
 }
