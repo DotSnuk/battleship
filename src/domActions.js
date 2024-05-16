@@ -38,3 +38,5 @@ export function greeter() {
   wrapper.appendChild(begin);
   cont.appendChild(wrapper);
 }
+
+export function drawBoard(player) {}
