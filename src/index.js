@@ -3,6 +3,7 @@ import Player from './Player';
 import './style.css';
 
 const players = [];
+const currentPlayer = 0;
 
 dom.init();
 dom.greeter();
@@ -20,5 +21,6 @@ begin.addEventListener('click', () => {
     const player = new Player(false, name);
     players.push(player);
   }
-  dom.drawBoard(players[0]);
+  dom.clearContent();
+  dom.drawBoards(players[currentPlayer], players[1 - currentPlayer]);
 });

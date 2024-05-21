@@ -39,9 +39,15 @@ export function greeter() {
   content.appendChild(wrapper);
 }
 
-function setBoardGridStyle(id, length) {
+export function clearContent() {
+  const content = document.getElementById('content');
+  const children = document.querySelectorAll('#content > div');
+  children.forEach(child => content.removeChild(child));
+}
+
+function setGridProperty(div, length) {
   // change to setGridProperty
-  const elem = document.getElementById(id);
+  const elem = div;
   elem.style.display = 'grid';
   elem.style.setProperty('grid-template-rows', `repeat(${length}, 1fr)`);
   elem.style.setProperty('grid-template-columns', `repeat(${length}, 1fr)`);
@@ -58,7 +64,6 @@ function addAxis(div, col, row) {
 }
 
 function addClassSquare(div, col, row) {
-  console.log(`col ${col} row ${row}`);
   if (col === 0 || row === 0) {
     return addAxis(div, col, row);
   }
@@ -68,14 +73,14 @@ function addClassSquare(div, col, row) {
   return element.classList.add('node');
 }
 
-export function drawBoard(player) {
+export function drawBoard(player, showShips) {
   const content = document.getElementById('content');
   const { length } = player.board.board;
   const { board } = player;
   const playerBoard = document.createElement('div');
-  playerBoard.id = 'playerboard';
+  playerBoard.classList.add('board');
   content.appendChild(playerBoard);
-  setBoardGridStyle('playerboard', length + 1);
+  setGridProperty(playerBoard, length + 1);
   for (let col = 0; col < length + 1; col += 1) {
     for (let row = 0; row < length + 1; row += 1) {
       const square = document.createElement('div');
@@ -91,4 +96,14 @@ export function drawBoard(player) {
     }
   }
   content.appendChild(playerBoard);
+}
+
+export function drawBoards(...players) {
+  for (let i = 0; i < arguments.length; i += 1) {
+    if (i === 0) {
+      drawBoard(players[i], true);
+    } else {
+      drawBoard(players[i], false);
+    }
+  }
 }
