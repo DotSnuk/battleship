@@ -46,6 +46,14 @@ export default class Gameboard {
     return startArray[0] >= 0 && startArray[0] + length <= boardLength;
   }
 
+  prePlaceShips() {
+    this.placeShip(0, 'horizontal', 'A', 1);
+    this.placeShip(0, 'vertical', 'B', 2);
+    this.placeShip(0, 'horizontal', 'c', 2);
+    this.placeShip(0, 'horizontal', 'd', 4);
+    this.placeShip(0, 'vertical', 'f', 5);
+  }
+
   getMissedAttacks() {
     const missedAttacks = [];
     this.board.forEach((y, yIndx) => {

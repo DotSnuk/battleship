@@ -73,7 +73,7 @@ function addClassSquare(div, col, row) {
   return element.classList.add('node');
 }
 
-export function drawBoard(player, showShips) {
+function drawBoard(player, showShips) {
   const content = document.getElementById('content');
   const { length } = player.board.board;
   const { board } = player;
@@ -87,7 +87,7 @@ export function drawBoard(player, showShips) {
       if (col !== 0 || row !== 0) addClassSquare(square, col, row);
       if (square.classList.contains('node')) {
         const node = board.getNode(square.dataset.x, square.dataset.y);
-        if (node.hasShip()) square.innerText = 'ship';
+        if (node.hasShip() && showShips) square.innerText = 'ship';
       }
       playerBoard.appendChild(square);
       // if one of col and row is 0, I need to get the appropriate

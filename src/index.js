@@ -19,6 +19,7 @@ begin.addEventListener('click', () => {
       name = playerNameInput.value;
     }
     const player = new Player(false, name);
+    player.board.prePlaceShips();
     players.push(player);
   }
   dom.clearContent();
