@@ -46,7 +46,6 @@ export function clearContent() {
 }
 
 function setGridProperty(div, length) {
-  // change to setGridProperty
   const elem = div;
   elem.style.display = 'grid';
   elem.style.setProperty('grid-template-rows', `repeat(${length}, 1fr)`);
@@ -90,9 +89,6 @@ function drawBoard(player, showShips) {
         if (node.hasShip() && showShips) square.innerText = 'ship';
       }
       playerBoard.appendChild(square);
-      // if one of col and row is 0, I need to get the appropriate
-      // number or letter to show that on the axes.
-      //  if col is 0, i need to get row, and vice versa
     }
   }
   content.appendChild(playerBoard);
