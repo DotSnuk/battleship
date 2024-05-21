@@ -44,7 +44,20 @@ describe('Gameboard', () => {
     expect(missedAttack.length).toBe(2);
   });
 
-  // make test for allShipSunk
+  it('Get node from coordinate', () => {
+    const nod = board.getNode('b', 2);
+    expect(nod.hasShip()).toBeTruthy();
+  });
+
+  it('Get another node', () => {
+    const nod = board.getNode('e', 5);
+    expect(nod.hasShip()).toBeFalsy();
+  });
+
+  it('And another node', () => {
+    const nod = board.getNode('f', 2);
+    expect(nod.hasShip()).toBeTruthy();
+  });
 });
 
 describe('All ships sunk', () => {

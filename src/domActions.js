@@ -13,7 +13,7 @@ export function init() {
 }
 
 export function greeter() {
-  const cont = document.getElementById('content');
+  const content = document.getElementById('content');
   const wrapper = document.createElement('div');
   for (let i = 0; i < 2; i += 1) {
     const div = document.createElement('div');
@@ -36,7 +36,59 @@ export function greeter() {
   begin.value = 'Begin';
   begin.id = 'begin';
   wrapper.appendChild(begin);
-  cont.appendChild(wrapper);
+  content.appendChild(wrapper);
 }
 
-export function drawBoard(player) {}
+function setBoardGridStyle(id, length) {
+  // change to setGridProperty
+  const elem = document.getElementById(id);
+  elem.style.display = 'grid';
+  elem.style.setProperty('grid-template-rows', `repeat(${length}, 1fr)`);
+  elem.style.setProperty('grid-template-columns', `repeat(${length}, 1fr)`);
+}
+
+function addAxis(div, col, row) {
+  const element = div;
+  if (col === 0) {
+    element.innerText = String.fromCharCode(row + 64);
+  } else {
+    element.innerText = col;
+  }
+  return element.classList.add('axis');
+}
+
+function addClassSquare(div, col, row) {
+  console.log(`col ${col} row ${row}`);
+  if (col === 0 || row === 0) {
+    return addAxis(div, col, row);
+  }
+  const element = div;
+  element.dataset.x = String.fromCharCode(row + 64);
+  element.dataset.y = col;
+  return element.classList.add('node');
+}
+
+export function drawBoard(player) {
+  const content = document.getElementById('content');
+  const { length } = player.board.board;
+  const { board } = player;
+  const playerBoard = document.createElement('div');
+  playerBoard.id = 'playerboard';
+  content.appendChild(playerBoard);
+  setBoardGridStyle('playerboard', length + 1);
+  for (let col = 0; col < length + 1; col += 1) {
+    for (let row = 0; row < length + 1; row += 1) {
+      const square = document.createElement('div');
+      if (col !== 0 || row !== 0) addClassSquare(square, col, row);
+      if (square.classList.contains('node')) {
+        const node = board.getNode(square.dataset.x, square.dataset.y);
+        if (node.hasShip()) square.innerText = 'ship';
+      }
+      playerBoard.appendChild(square);
+      // if one of col and row is 0, I need to get the appropriate
+      // number or letter to show that on the axes.
+      //  if col is 0, i need to get row, and vice versa
+    }
+  }
+  content.appendChild(playerBoard);
+}

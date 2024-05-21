@@ -20,4 +20,5 @@ begin.addEventListener('click', () => {
     const player = new Player(false, name);
     players.push(player);
   }
+  dom.drawBoard(players[0]);
 });

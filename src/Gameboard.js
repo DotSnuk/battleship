@@ -60,6 +60,11 @@ export default class Gameboard {
     return this.listActiveShips.every(ship => ship.isSunk());
   }
 
+  getNode(x, y) {
+    const coords = Gameboard.#translateCoords([x, y]);
+    return this.board[coords[0]][coords[1]];
+  }
+
   getNodes(dir, length, startArray) {
     if (dir === 'vertical')
       return this.board[startArray[0]].slice(
