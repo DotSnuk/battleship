@@ -35,6 +35,20 @@ body {
   padding: 2px;
 }
 
+.miss {
+  color: red;
+}
+
+.hit {
+  color: green;
+}
+
+.node {
+  &:hover {
+    background-color: #d3d3d3;
+  }
+}
+
 input.name {
   height: 30px;
   width: 80%;

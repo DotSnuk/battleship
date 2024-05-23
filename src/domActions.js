@@ -12,8 +12,20 @@ export function init() {
   body.appendChild(content);
 }
 
+function getContentDiv() {
+  return document.getElementById('content');
+}
+
+function getPlayerBoard() {
+  return document.querySelector('.board.player');
+}
+
+function getOpponentBoard() {
+  return document.querySelector('.board.opponent');
+}
+
 export function greeter() {
-  const content = document.getElementById('content');
+  const content = getContentDiv();
   const wrapper = document.createElement('div');
   for (let i = 0; i < 2; i += 1) {
     const div = document.createElement('div');
@@ -40,7 +52,7 @@ export function greeter() {
 }
 
 export function clearContent() {
-  const content = document.getElementById('content');
+  const content = getContentDiv();
   const children = document.querySelectorAll('#content > div');
   children.forEach(child => content.removeChild(child));
 }
@@ -52,38 +64,47 @@ function setGridProperty(div, length) {
   elem.style.setProperty('grid-template-columns', `repeat(${length}, 1fr)`);
 }
 
-function addAxis(div, col, row) {
+function setAxis(div, col, row) {
   const element = div;
   if (col === 0) {
     element.innerText = String.fromCharCode(row + 64);
   } else {
     element.innerText = col;
   }
-  return element.classList.add('axis');
+  element.classList.add('axis');
 }
 
-function addClassSquare(div, col, row) {
+function setClassSquare(div, col, row) {
   if (col === 0 || row === 0) {
-    return addAxis(div, col, row);
+    setAxis(div, col, row);
+  } else {
+    const element = div;
+    element.dataset.x = String.fromCharCode(row + 64);
+    element.dataset.y = col;
+    element.classList.add('node');
   }
-  const element = div;
-  element.dataset.x = String.fromCharCode(row + 64);
-  element.dataset.y = col;
-  return element.classList.add('node');
+}
+
+function setClassBoard(board, showShips) {
+  if (showShips) {
+    board.classList.add('board', 'player');
+  } else {
+    board.classList.add('board', 'opponent');
+  }
 }
 
 function drawBoard(player, showShips) {
-  const content = document.getElementById('content');
+  const content = getContentDiv();
   const { length } = player.board.board;
   const { board } = player;
   const playerBoard = document.createElement('div');
-  playerBoard.classList.add('board');
-  content.appendChild(playerBoard);
+  setClassBoard(playerBoard, showShips);
   setGridProperty(playerBoard, length + 1);
+  content.appendChild(playerBoard);
   for (let col = 0; col < length + 1; col += 1) {
     for (let row = 0; row < length + 1; row += 1) {
       const square = document.createElement('div');
-      if (col !== 0 || row !== 0) addClassSquare(square, col, row);
+      if (col !== 0 || row !== 0) setClassSquare(square, col, row);
       if (square.classList.contains('node')) {
         const node = board.getNode(square.dataset.x, square.dataset.y);
         if (node.hasShip() && showShips) square.innerText = 'ship';
@@ -102,4 +123,21 @@ export function drawBoards(...players) {
       drawBoard(players[i], false);
     }
   }
+}
+
+function setAttackClass(div, didHit) {
+  if (didHit) {
+    div.classList.add('hit');
+  } else {
+    div.classList.add('miss');
+  }
+}
+
+export function renderAttack(x, y, didHit) {
+  // const opponentDiv = document.querySelector('.board.opponent');
+  const node = document.querySelector(
+    `.opponent > [data-x="${x}"][data-y="${y}"]`,
+  );
+  node.innerText = 'X';
+  setAttackClass(node, didHit);
 }
