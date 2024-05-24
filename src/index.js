@@ -20,14 +20,15 @@ function changePlayer() {
   // timeout
   setTimeout(() => {
     currentPlayer = 1 - currentPlayer;
-    dom.clearContent();
-    dom.drawBoards(getPlayer(), getOpponent());
+    dom.updateBoard(getPlayer(), getOpponent());
+    // dom.clearContent();
+    // dom.drawBoards(getPlayer(), getOpponent());
   }, 5000);
 }
 
 function attack(x, y) {
   const opponent = getOpponent();
-  dom.renderAttack(x, y, opponent.board.receiveAttack(x, y));
+  dom.renderAttack(x, y, opponent.board.receiveAttack(x, y), false);
   changePlayer();
 }
 

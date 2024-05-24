@@ -57,6 +57,52 @@ export function clearContent() {
   children.forEach(child => content.removeChild(child));
 }
 
+export function clearBoard() {
+  const boards = document.querySelectorAll('.board');
+  boards.forEach(board => {
+    const nodes = board.querySelectorAll('.node');
+    nodes.forEach(node => {
+      const div = node;
+      div.innerText = '';
+    });
+  });
+}
+
+function renderShip(div, node) {
+  const element = div;
+  const { ship } = node;
+  element.innerText = ship.name.slice(0, 2);
+}
+
+function fillBoard(player, isCurrentPlayer) {
+  let board;
+  if (isCurrentPlayer) {
+    board = getPlayerBoard();
+  } else {
+    board = getOpponentBoard();
+  }
+  board.querySelectorAll('.node').forEach(div => {
+    const node = player.board.getNode(div.dataset.x, div.dataset.y);
+    if (node.beenHit) {
+      const elem = div;
+      elem.innerText = 'X';
+    } else if (isCurrentPlayer && node.hasShip()) {
+      renderShip(div, node);
+    }
+  });
+}
+
+export function updateBoard(...players) {
+  clearBoard();
+  for (let i = 0; i < players.length; i += 1) {
+    if (i === 0) {
+      fillBoard(players[i], true);
+    } else {
+      fillBoard(players[i], false);
+    }
+  }
+}
+
 function setGridProperty(div, length) {
   const elem = div;
   elem.style.display = 'grid';
@@ -85,20 +131,42 @@ function setClassSquare(div, col, row) {
   }
 }
 
-function setClassBoard(board, showShips) {
-  if (showShips) {
+function setClassBoard(board, isCurrentPlayer) {
+  if (isCurrentPlayer) {
     board.classList.add('board', 'player');
   } else {
     board.classList.add('board', 'opponent');
   }
 }
 
-function drawBoard(player, showShips) {
+function setAttackClass(div, didHit) {
+  if (didHit) {
+    div.classList.add('hit');
+  } else {
+    div.classList.add('miss');
+  }
+}
+
+export function renderAttack(x, y, didHit, isCurrentPlayer) {
+  let queryString;
+  if (isCurrentPlayer) {
+    queryString = '.player > ';
+  } else {
+    queryString = '.opponent > ';
+  }
+  queryString += `[data-x="${x}"][data-y="${y}"]`;
+  console.log(queryString);
+  const div = document.querySelector(queryString);
+  div.innerText = 'X';
+  setAttackClass(div, didHit);
+}
+
+function drawBoard(player, isCurrentPlayer) {
   const content = getContentDiv();
   const { length } = player.board.board;
   const { board } = player;
   const playerBoard = document.createElement('div');
-  setClassBoard(playerBoard, showShips);
+  setClassBoard(playerBoard, isCurrentPlayer);
   setGridProperty(playerBoard, length + 1);
   content.appendChild(playerBoard);
   for (let col = 0; col < length + 1; col += 1) {
@@ -107,7 +175,16 @@ function drawBoard(player, showShips) {
       if (col !== 0 || row !== 0) setClassSquare(square, col, row);
       if (square.classList.contains('node')) {
         const node = board.getNode(square.dataset.x, square.dataset.y);
-        if (node.hasShip() && showShips) square.innerText = 'ship';
+        if (node.beenHit) {
+          renderAttack(
+            square.dataset.x,
+            square.dataset.y,
+            node.hasShip(),
+            isCurrentPlayer,
+          );
+        } else if (node.hasShip() && isCurrentPlayer) {
+          renderShip(square, node);
+        }
       }
       playerBoard.appendChild(square);
     }
@@ -123,21 +200,4 @@ export function drawBoards(...players) {
       drawBoard(players[i], false);
     }
   }
-}
-
-function setAttackClass(div, didHit) {
-  if (didHit) {
-    div.classList.add('hit');
-  } else {
-    div.classList.add('miss');
-  }
-}
-
-export function renderAttack(x, y, didHit) {
-  // const opponentDiv = document.querySelector('.board.opponent');
-  const node = document.querySelector(
-    `.opponent > [data-x="${x}"][data-y="${y}"]`,
-  );
-  node.innerText = 'X';
-  setAttackClass(node, didHit);
 }
