@@ -46,12 +46,35 @@ export default class Gameboard {
     return startArray[0] >= 0 && startArray[0] + length <= boardLength;
   }
 
+  getRandomInt(max) {
+    return Math.floor(Math.random() * max);
+  }
+
+  intToLetter(int) {
+    return String.fromCharCode(int + 64);
+  }
+
   prePlaceShips() {
-    this.placeShip(0, 'horizontal', 'A', 1);
-    this.placeShip(0, 'vertical', 'B', 2);
-    this.placeShip(0, 'horizontal', 'c', 2);
-    this.placeShip(0, 'horizontal', 'd', 4);
-    this.placeShip(0, 'vertical', 'f', 5);
+    this.placeShip(
+      0,
+      'horizontal',
+      this.intToLetter(1 + this.getRandomInt(6)),
+      1,
+    );
+    this.placeShip(0, 'vertical', 'B', 2 + this.getRandomInt(6));
+    this.placeShip(
+      0,
+      'horizontal',
+      this.intToLetter(3 + this.getRandomInt(6)),
+      3,
+    );
+    this.placeShip(
+      0,
+      'horizontal',
+      this.intToLetter(4 + this.getRandomInt(5)),
+      4,
+    );
+    this.placeShip(0, 'vertical', 'f', 5 + this.getRandomInt(5));
   }
 
   getMissedAttacks() {

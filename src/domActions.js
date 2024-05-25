@@ -74,35 +74,6 @@ function renderShip(div, node) {
   element.innerText = ship.name.slice(0, 2);
 }
 
-function fillBoard(player, isCurrentPlayer) {
-  let board;
-  if (isCurrentPlayer) {
-    board = getPlayerBoard();
-  } else {
-    board = getOpponentBoard();
-  }
-  board.querySelectorAll('.node').forEach(div => {
-    const node = player.board.getNode(div.dataset.x, div.dataset.y);
-    if (node.beenHit) {
-      const elem = div;
-      elem.innerText = 'X';
-    } else if (isCurrentPlayer && node.hasShip()) {
-      renderShip(div, node);
-    }
-  });
-}
-
-export function updateBoard(...players) {
-  clearBoard();
-  for (let i = 0; i < players.length; i += 1) {
-    if (i === 0) {
-      fillBoard(players[i], true);
-    } else {
-      fillBoard(players[i], false);
-    }
-  }
-}
-
 function setGridProperty(div, length) {
   const elem = div;
   elem.style.display = 'grid';
@@ -159,6 +130,36 @@ export function renderAttack(x, y, didHit, isCurrentPlayer) {
   const div = document.querySelector(queryString);
   div.innerText = 'X';
   setAttackClass(div, didHit);
+}
+
+function fillBoard(player, isCurrentPlayer) {
+  let board;
+  if (isCurrentPlayer) {
+    board = getPlayerBoard();
+  } else {
+    board = getOpponentBoard();
+  }
+  board.querySelectorAll('.node').forEach(div => {
+    const node = player.board.getNode(div.dataset.x, div.dataset.y);
+    if (node.beenHit) {
+      const elem = div;
+      elem.innerText = 'X';
+      setAttackClass(elem, node.hasShip());
+    } else if (isCurrentPlayer && node.hasShip()) {
+      renderShip(div, node);
+    }
+  });
+}
+
+export function updateBoard(...players) {
+  clearBoard();
+  for (let i = 0; i < players.length; i += 1) {
+    if (i === 0) {
+      fillBoard(players[i], true);
+    } else {
+      fillBoard(players[i], false);
+    }
+  }
 }
 
 function drawBoard(player, isCurrentPlayer) {
