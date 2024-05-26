@@ -126,7 +126,6 @@ export function renderAttack(x, y, didHit, isCurrentPlayer) {
     queryString = '.opponent > ';
   }
   queryString += `[data-x="${x}"][data-y="${y}"]`;
-  console.log(queryString);
   const div = document.querySelector(queryString);
   div.innerText = 'X';
   setAttackClass(div, didHit);

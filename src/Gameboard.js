@@ -39,6 +39,10 @@ export default class Gameboard {
     return [x, y];
   }
 
+  static #intToCoords(arr) {
+    return [String.fromCharCode(arr[0] + 65), arr[1] + 1];
+  }
+
   #withinBounds(dir, length, startArray) {
     const boardLength = this.board.length;
     if (dir === 'vertical')
@@ -85,6 +89,20 @@ export default class Gameboard {
       });
     });
     return missedAttacks;
+  }
+
+  getAttacks() {
+    const attacks = [];
+    this.board.forEach((y, yIndx) => {
+      y.forEach((x, xIndx) => {
+        if (x.beenHit) {
+          const coords = Gameboard.#intToCoords([xIndx, yIndx]);
+          const hitShip = x.hasShip();
+          attacks.push({ coords, hitShip });
+        }
+      });
+    });
+    return attacks;
   }
 
   allShipsSunk() {

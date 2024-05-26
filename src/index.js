@@ -1,5 +1,6 @@
 import * as dom from './domActions';
 import Player from './Player';
+import Computer from './Computer';
 import './style.css';
 
 const players = [];
@@ -52,9 +53,13 @@ begin.addEventListener('click', () => {
     } else {
       name = playerNameInput.value;
     }
-    const player = new Player(false, name);
-    player.board.prePlaceShips();
-    players.push(player);
+    const computerCheck = document.querySelector(`.player${i + 1} > .computer`);
+    if (computerCheck.checked) {
+      players.push(new Computer(name));
+    } else {
+      players.push(new Player(name));
+    }
+    players[i].board.prePlaceShips();
   }
   dom.clearContent();
   dom.drawBoards(getPlayer(), getOpponent());

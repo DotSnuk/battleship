@@ -44,6 +44,17 @@ describe('Gameboard', () => {
     expect(missedAttack.length).toBe(2);
   });
 
+  it('Get all attacks', () => {
+    expect(board.getAttacks().length).toBe(3);
+  });
+
+  it('Filter out hits', () => {
+    const attacks = board.getAttacks();
+    const hits = attacks.filter(attck => attck.hitShip === true);
+    console.log(hits[0].coords);
+    expect(hits.length).toBe(1);
+  });
+
   it('Get node from coordinate', () => {
     const nod = board.getNode('b', 2);
     expect(nod.hasShip()).toBeTruthy();
