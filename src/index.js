@@ -18,12 +18,9 @@ function getPlayer() {
 }
 
 function changePlayer() {
-  // timeout
   setTimeout(() => {
     currentPlayer = 1 - currentPlayer;
     dom.updateBoard(getPlayer(), getOpponent());
-    // dom.clearContent();
-    // dom.drawBoards(getPlayer(), getOpponent());
   }, 5000);
 }
 
@@ -62,6 +59,6 @@ begin.addEventListener('click', () => {
     players[i].board.prePlaceShips();
   }
   dom.clearContent();
-  dom.drawBoards(getPlayer(), getOpponent());
+  dom.drawPlayers(getPlayer(), getOpponent());
   addNodeListeners();
 });

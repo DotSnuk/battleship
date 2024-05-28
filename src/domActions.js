@@ -150,25 +150,41 @@ function fillBoard(player, isCurrentPlayer) {
   });
 }
 
+function updateName(player, isCurrentPlayer) {
+  let query = `.info.player`;
+  if (isCurrentPlayer) {
+    query += `1 > .name`;
+  } else {
+    query += `2 > .name`;
+  }
+  document.querySelector(query).innerText = player.name;
+}
+
 export function updateBoard(...players) {
   clearBoard();
   for (let i = 0; i < players.length; i += 1) {
     if (i === 0) {
+      updateName(players[i], true);
       fillBoard(players[i], true);
     } else {
+      updateName(players[i], false);
       fillBoard(players[i], false);
     }
   }
 }
 
+function getPlayerWrapper(isCurrentPlayer) {
+  if (isCurrentPlayer) return document.querySelector('.info.player1');
+  return document.querySelector('.info.player2');
+}
+
 function drawBoard(player, isCurrentPlayer) {
-  const content = getContentDiv();
+  const playerWrapper = getPlayerWrapper(isCurrentPlayer);
   const { length } = player.board.board;
   const { board } = player;
   const playerBoard = document.createElement('div');
   setClassBoard(playerBoard, isCurrentPlayer);
   setGridProperty(playerBoard, length + 1);
-  content.appendChild(playerBoard);
   for (let col = 0; col < length + 1; col += 1) {
     for (let row = 0; row < length + 1; row += 1) {
       const square = document.createElement('div');
@@ -189,14 +205,28 @@ function drawBoard(player, isCurrentPlayer) {
       playerBoard.appendChild(square);
     }
   }
-  content.appendChild(playerBoard);
+  playerWrapper.appendChild(playerBoard);
 }
 
-export function drawBoards(...players) {
+function drawName(player, isCurrentPlayer) {
+  const playerWrapper = getPlayerWrapper(isCurrentPlayer);
+  const nameDiv = document.createElement('div');
+  nameDiv.innerText = player.name;
+  nameDiv.classList.add('name');
+  playerWrapper.appendChild(nameDiv);
+}
+
+export function drawPlayers(...players) {
+  const content = getContentDiv();
   for (let i = 0; i < arguments.length; i += 1) {
+    const playerWrapper = document.createElement('div');
+    playerWrapper.classList.add('info', `player${i + 1}`);
+    content.appendChild(playerWrapper);
     if (i === 0) {
+      drawName(players[i], true);
       drawBoard(players[i], true);
     } else {
+      drawName(players[i], false);
       drawBoard(players[i], false);
     }
   }
