@@ -51,7 +51,6 @@ describe('Gameboard', () => {
   it('Filter out hits', () => {
     const attacks = board.getAttacks();
     const hits = attacks.filter(attck => attck.hitShip === true);
-    console.log(hits[0].coords);
     expect(hits.length).toBe(1);
   });
 

@@ -17,16 +17,25 @@ function getPlayer() {
   return players[currentPlayer];
 }
 
+function computerAttack() {
+  const newAttack = getPlayer().getAttack(getOpponent());
+  setTimeout(() => {
+    attack(newAttack[0], newAttack[1]);
+  }, 3000);
+}
+
 function changePlayer() {
   setTimeout(() => {
     currentPlayer = 1 - currentPlayer;
     dom.updateBoard(getPlayer(), getOpponent());
+    if (getPlayer() instanceof Computer) computerAttack();
   }, 5000);
 }
 
 function attack(x, y) {
   const opponent = getOpponent();
-  dom.renderAttack(x, y, opponent.board.receiveAttack(x, y), false);
+  const didAttackHit = opponent.board.receiveAttack(x, y);
+  dom.renderAttack(x, y, didAttackHit, false);
   changePlayer();
 }
 

@@ -150,14 +150,14 @@ function fillBoard(player, isCurrentPlayer) {
   });
 }
 
+function getPlayerWrapper(isCurrentPlayer) {
+  if (isCurrentPlayer) return document.querySelector('.info.player1');
+  return document.querySelector('.info.player2');
+}
+
 function updateName(player, isCurrentPlayer) {
-  let query = `.info.player`;
-  if (isCurrentPlayer) {
-    query += `1 > .name`;
-  } else {
-    query += `2 > .name`;
-  }
-  document.querySelector(query).innerText = player.name;
+  const playerWrapper = getPlayerWrapper(isCurrentPlayer);
+  playerWrapper.querySelector('.name').innerText = player.name;
 }
 
 export function updateBoard(...players) {
@@ -171,11 +171,6 @@ export function updateBoard(...players) {
       fillBoard(players[i], false);
     }
   }
-}
-
-function getPlayerWrapper(isCurrentPlayer) {
-  if (isCurrentPlayer) return document.querySelector('.info.player1');
-  return document.querySelector('.info.player2');
 }
 
 function drawBoard(player, isCurrentPlayer) {

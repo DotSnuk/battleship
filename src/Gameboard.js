@@ -39,7 +39,7 @@ export default class Gameboard {
     return [x, y];
   }
 
-  static #intToCoords(arr) {
+  static intToCoords(arr) {
     return [String.fromCharCode(arr[0] + 65), arr[1] + 1];
   }
 
@@ -81,11 +81,12 @@ export default class Gameboard {
     this.placeShip(0, 'vertical', 'f', 5 + this.getRandomInt(5));
   }
 
+  // refactor to use getAttacks
   getMissedAttacks() {
     const missedAttacks = [];
-    this.board.forEach((y, yIndx) => {
-      y.forEach((x, xIndx) => {
-        if (x.beenHit && !x.hasShip()) missedAttacks.push([xIndx, yIndx]);
+    this.board.forEach((x, xIndx) => {
+      x.forEach((y, yIndx) => {
+        if (y.beenHit && !y.hasShip()) missedAttacks.push([xIndx, yIndx]);
       });
     });
     return missedAttacks;
@@ -93,11 +94,12 @@ export default class Gameboard {
 
   getAttacks() {
     const attacks = [];
-    this.board.forEach((y, yIndx) => {
-      y.forEach((x, xIndx) => {
-        if (x.beenHit) {
-          const coords = Gameboard.#intToCoords([xIndx, yIndx]);
-          const hitShip = x.hasShip();
+    this.board.forEach((x, xIndx) => {
+      x.forEach((y, yIndx) => {
+        if (y.beenHit) {
+          const coords = Gameboard.intToCoords([xIndx, yIndx]);
+
+          const hitShip = y.hasShip();
           attacks.push({ coords, hitShip });
         }
       });
