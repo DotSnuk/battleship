@@ -23,6 +23,18 @@ body {
   flex-direction: row;
 }
 
+#timer {
+  box-sizing: border-box;
+  position: fixed;
+  bottom: -1px;
+  border-bottom: none;
+  padding: 8px;
+  border-radius: 10px;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  border: 1px solid black;
+}
+
 .wrapper {
   display: flex;
   flex-direction: column;

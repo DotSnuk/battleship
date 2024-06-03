@@ -25,11 +25,13 @@ function computerAttack() {
 }
 
 function changePlayer() {
+  dom.showTimer(5000);
   setTimeout(() => {
     currentPlayer = 1 - currentPlayer;
     getPlayer().hasAttacked = false;
     dom.updateBoard(getPlayer(), getOpponent());
     if (getPlayer() instanceof Computer) computerAttack();
+    dom.removeTimer();
   }, 5000);
 }
 

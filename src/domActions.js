@@ -51,6 +51,24 @@ export function greeter() {
   content.appendChild(wrapper);
 }
 
+export function removeTimer() {
+  const content = getContentDiv();
+  const timer = document.getElementById('timer');
+  content.removeChild(timer);
+}
+
+export function showTimer(time) {
+  let timeLeft = time;
+  const timerDiv = document.createElement('div');
+  timerDiv.id = 'timer';
+  getContentDiv().appendChild(timerDiv);
+  setInterval(() => {
+    timeLeft -= 1000;
+    const seconds = Math.floor(timeLeft / 1000);
+    timerDiv.innerText = `Changing player ${seconds}`;
+  }, 1000);
+}
+
 export function clearContent() {
   const content = getContentDiv();
   const children = document.querySelectorAll('#content > div');
@@ -138,14 +156,14 @@ function fillBoard(player, isCurrentPlayer) {
   } else {
     board = getOpponentBoard();
   }
-  board.querySelectorAll('.node').forEach(div => {
-    const node = player.board.getNode(div.dataset.x, div.dataset.y);
+  board.querySelectorAll('.node').forEach(elem => {
+    const node = player.board.getNode(elem.dataset.x, elem.dataset.y);
     if (node.beenHit) {
-      const elem = div;
-      elem.innerText = 'X';
-      setAttackClass(elem, node.hasShip());
+      const div = elem; //
+      div.innerText = 'X';
+      setAttackClass(div, node.hasShip());
     } else if (isCurrentPlayer && node.hasShip()) {
-      renderShip(div, node);
+      renderShip(elem, node); //
     }
   });
 }
