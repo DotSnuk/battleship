@@ -27,6 +27,7 @@ function computerAttack() {
 function changePlayer() {
   setTimeout(() => {
     currentPlayer = 1 - currentPlayer;
+    getPlayer().hasAttacked = false;
     dom.updateBoard(getPlayer(), getOpponent());
     if (getPlayer() instanceof Computer) computerAttack();
   }, 5000);
@@ -35,6 +36,7 @@ function changePlayer() {
 function attack(x, y) {
   const opponent = getOpponent();
   const didAttackHit = opponent.board.receiveAttack(x, y);
+  getPlayer().hasAttacked = true;
   dom.renderAttack(x, y, didAttackHit, false);
   changePlayer();
 }
@@ -44,7 +46,9 @@ function addNodeListeners() {
   const nodes = Array.from(document.querySelectorAll('.opponent > .node'));
   nodes.forEach(node =>
     node.addEventListener('click', () => {
-      attack(node.dataset.x, node.dataset.y);
+      if (!getPlayer().hasAttacked && !(getPlayer() instanceof Computer)) {
+        attack(node.dataset.x, node.dataset.y);
+      }
     }),
   );
 }
