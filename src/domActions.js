@@ -51,6 +51,14 @@ export function greeter() {
   content.appendChild(wrapper);
 }
 
+export function playerWins(player) {
+  const content = getContentDiv();
+  const div = document.createElement('div');
+  div.innerText = `Player ${player.name} wins!`;
+  content.appendChild(div);
+  // re-play option
+}
+
 export function removeTimer() {
   const content = getContentDiv();
   const timer = document.getElementById('timer');
@@ -147,6 +155,10 @@ export function renderAttack(x, y, didHit, isCurrentPlayer) {
   const div = document.querySelector(queryString);
   div.innerText = 'X';
   setAttackClass(div, didHit);
+  div.classList.add('animateAttack');
+  setTimeout(() => {
+    div.classList.remove('animateAttack');
+  }, 1000);
 }
 
 function fillBoard(player, isCurrentPlayer) {

@@ -35,12 +35,21 @@ function changePlayer() {
   }, 5000);
 }
 
+function checkWin() {
+  if (getOpponent().board.allShipsSunk()) {
+    //
+  }
+  return false;
+}
+
 function attack(x, y) {
   const opponent = getOpponent();
   const didAttackHit = opponent.board.receiveAttack(x, y);
   getPlayer().hasAttacked = true;
   dom.renderAttack(x, y, didAttackHit, false);
-  changePlayer();
+  if (!checkWin()) {
+    changePlayer();
+  }
 }
 
 function addNodeListeners() {
