@@ -37,7 +37,8 @@ function changePlayer() {
 
 function checkWin() {
   if (getOpponent().board.allShipsSunk()) {
-    //
+    dom.playerWins(getPlayer());
+    return true;
   }
   return false;
 }
@@ -45,6 +46,7 @@ function checkWin() {
 function attack(x, y) {
   const opponent = getOpponent();
   const didAttackHit = opponent.board.receiveAttack(x, y);
+  if (didAttackHit === null) return;
   getPlayer().hasAttacked = true;
   dom.renderAttack(x, y, didAttackHit, false);
   if (!checkWin()) {

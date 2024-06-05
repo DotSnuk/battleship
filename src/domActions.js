@@ -52,10 +52,9 @@ export function greeter() {
 }
 
 export function playerWins(player) {
-  const content = getContentDiv();
   const div = document.createElement('div');
-  div.innerText = `Player ${player.name} wins!`;
-  content.appendChild(div);
+  div.innerText = `${player.name} wins!`;
+  body.appendChild(div);
   // re-play option
 }
 

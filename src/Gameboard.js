@@ -155,6 +155,7 @@ export default class Gameboard {
   receiveAttack(x, y) {
     const coords = Gameboard.#translateCoords([x, y]);
     const node = this.board[coords[0]][coords[1]];
+    if (node.beenHit) return null;
     node.beenHit = true;
     if (node.hasShip()) {
       const { ship } = node;
