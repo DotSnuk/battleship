@@ -88,6 +88,8 @@ export function clearBoard() {
     const nodes = board.querySelectorAll('.node');
     nodes.forEach(node => {
       const div = node;
+      div.setAttribute('class', 'node');
+      // removes old classes from previous player
       div.innerText = '';
     });
   });
@@ -96,6 +98,7 @@ export function clearBoard() {
 function renderShip(div, node) {
   const element = div;
   const { ship } = node;
+  element.classList.add('ship');
   element.innerText = ship.name.slice(0, 2);
 }
 
