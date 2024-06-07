@@ -51,6 +51,27 @@ export function greeter() {
   content.appendChild(wrapper);
 }
 
+function shipButton(ship) {
+  const button = document.createElement('input');
+  button.setAttribute('type', 'button');
+  button.classList.add('ship');
+  button.value = `${ship.name}`;
+  button.dataset.id = ship.id;
+  return button;
+}
+
+export function showPlacement(player) {
+  drawBoard(player, true);
+  const content = getContentDiv();
+  const placementDiv = document.createElement('div');
+  const ships = player.board.unplacedShips;
+  ships.forEach(ship => {
+    const shipBtn = shipButton(ship);
+    placementDiv.appendChild(shipBtn);
+  });
+  content.appendChild(placementDiv);
+}
+
 export function playerWins(player) {
   const div = document.createElement('div');
   div.innerText = `${player.name} wins!`;
@@ -173,9 +194,13 @@ function fillBoard(player, isCurrentPlayer) {
   board.querySelectorAll('.node').forEach(elem => {
     const node = player.board.getNode(elem.dataset.x, elem.dataset.y);
     if (node.beenHit) {
-      const div = elem; //
-      div.innerText = 'X';
-      setAttackClass(div, node.hasShip());
+      if (isCurrentPlayer && node.hasShip()) {
+        renderShip(elem, node);
+      } else {
+        const div = elem;
+        div.innerText = 'X';
+      }
+      setAttackClass(elem, node.hasShip());
     } else if (isCurrentPlayer && node.hasShip()) {
       renderShip(elem, node); //
     }
@@ -183,7 +208,17 @@ function fillBoard(player, isCurrentPlayer) {
 }
 
 function getPlayerWrapper(isCurrentPlayer) {
-  if (isCurrentPlayer) return document.querySelector('.info.player1');
+  if (isCurrentPlayer) {
+    const query = document.querySelector('.info.player1');
+    if (query === null) {
+      const content = getContentDiv();
+      const div = document.createElement('div');
+      div.classList.add('info', 'player1');
+      content.appendChild(div);
+      return div;
+    }
+    return query;
+  }
   return document.querySelector('.info.player2');
 }
 
@@ -216,19 +251,19 @@ function drawBoard(player, isCurrentPlayer) {
     for (let row = 0; row < length + 1; row += 1) {
       const square = document.createElement('div');
       if (col !== 0 || row !== 0) setClassSquare(square, col, row);
-      if (square.classList.contains('node')) {
-        const node = board.getNode(square.dataset.x, square.dataset.y);
-        if (node.beenHit) {
-          renderAttack(
-            square.dataset.x,
-            square.dataset.y,
-            node.hasShip(),
-            isCurrentPlayer,
-          );
-        } else if (node.hasShip() && isCurrentPlayer) {
-          renderShip(square, node);
-        }
-      }
+      // if (square.classList.contains('node')) {
+      //   const node = board.getNode(square.dataset.x, square.dataset.y);
+      //   if (node.beenHit) {
+      //     renderAttack(
+      //       square.dataset.x,
+      //       square.dataset.y,
+      //       node.hasShip(),
+      //       isCurrentPlayer,
+      //     );
+      //   } else if (node.hasShip() && isCurrentPlayer) {
+      //     renderShip(square, node);
+      //   }
+      // }
       playerBoard.appendChild(square);
     }
   }

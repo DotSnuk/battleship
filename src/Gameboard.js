@@ -4,7 +4,7 @@ import Ship from './Ship';
 export default class Gameboard {
   constructor() {
     this.board = Gameboard.#createBoard();
-    this.listStartShips = Gameboard.#getListShips();
+    this.unplacedShips = this.createStarterShips();
     this.listActiveShips = [];
   }
 
@@ -20,13 +20,32 @@ export default class Gameboard {
     return boardArray;
   }
 
+  createStarterShips() {
+    const ships = [
+      ['Carrier', 1, 5],
+      ['Battleship', 2, 4],
+      ['Cruiser', 3, 3],
+      ['Submarine', 4, 3],
+      ['Destroyer', 5, 2],
+    ];
+    const arrayShips = ships.map(ship => new Ship(ship[0], ship[1], ship[2]));
+    return arrayShips;
+  }
+
+  getUnplacedShip(id) {
+    const removeIndex = this.unplacedShips.map(ship => ship.id).indexOf(id);
+    if (removeIndex === -1) return null;
+    const ship = this.unplacedShips.splice(removeIndex, 1).pop();
+    return ship;
+  }
+
   static #getListShips() {
     const starterShips = [
-      ['Carrier', 5],
-      ['Battleship', 4],
-      ['Cruiser', 3],
-      ['Submarine', 3],
-      ['Destroyer', 2],
+      ['Carrier', 1, 5],
+      ['Battleship', 2, 4],
+      ['Cruiser', 3, 3],
+      ['Submarine', 4, 3],
+      ['Destroyer', 5, 2],
     ];
     return starterShips;
   }
@@ -129,21 +148,25 @@ export default class Gameboard {
     return indxFromVertical;
   }
 
-  spaceAvailable(nodes, dir, length, startArray) {
+  spaceAvailable(dir, length, startArray) {
+    const nodes = this.getNodes(dir, length, startArray);
     return (
       this.#withinBounds(dir, length, startArray) &&
       nodes.every(node => node.ship === null)
     );
   }
 
-  placeShip(indxStartShip, dir, startX, startY) {
+  placeShip(id, dir, startX, startY) {
     // throw error if listStartShips length === 0?
     const coords = Gameboard.#translateCoords([startX, startY]);
-    const lngth = this.listStartShips[indxStartShip][1];
-    const nodes = this.getNodes(dir, lngth, coords);
-    if (!this.spaceAvailable(nodes, dir, lngth, coords)) return false;
-    const shipPara = this.listStartShips.splice(indxStartShip, 1).flat();
-    const ship = new Ship(shipPara[0], shipPara[1]);
+    const ship = this.getUnplacedShip(id);
+    if (ship === null) return false;
+    const { length } = ship;
+    if (!this.spaceAvailable(dir, length, coords)) {
+      this.unplacedShips.push(ship);
+      return false;
+    }
+    const nodes = this.getNodes(dir, length, coords);
     this.listActiveShips.push(ship);
     nodes.forEach(node => {
       const nod = node;

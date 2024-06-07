@@ -39,6 +39,14 @@ body {
   border: 1px solid black;
 }
 
+input.ship {
+  font-size: 14px;
+  background-color: lightgray;
+  &:active {
+    background-color: gray;
+  }
+}
+
 .animateAttack {
   animation: pulse 1s ease-in 1;
 }
@@ -77,6 +85,11 @@ body {
 
 .ship {
   background-color: #aad2ec;
+}
+
+.player > .hit {
+  background-color: #f69c9e;
+  color: red;
 }
 
 .node {

@@ -1,7 +1,7 @@
 import Ship from './Ship';
 
 describe('Ship', () => {
-  const boat = new Ship('Hello', 3);
+  const boat = new Ship('Hello', 1, 3);
 
   it('Testing hit', () => {
     expect(boat.hit()).toBe(1);

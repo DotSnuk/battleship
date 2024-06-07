@@ -82,9 +82,10 @@ begin.addEventListener('click', () => {
     } else {
       players.push(new Player(name));
     }
-    players[i].board.prePlaceShips();
+    // players[i].board.prePlaceShips();
   }
   dom.clearContent();
-  dom.drawPlayers(getPlayer(), getOpponent());
-  addNodeListeners();
+  dom.showPlacement(players[0]);
+  // dom.drawPlayers(getPlayer(), getOpponent());
+  // addNodeListeners();
 });
