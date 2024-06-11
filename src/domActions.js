@@ -24,6 +24,21 @@ function getOpponentBoard() {
   return document.querySelector('.board.opponent');
 }
 
+function getPlayerWrapper(isCurrentPlayer) {
+  if (isCurrentPlayer) {
+    const query = document.querySelector('.info.player1');
+    if (query === null) {
+      const content = getContentDiv();
+      const div = document.createElement('div');
+      div.classList.add('info', 'player1');
+      content.appendChild(div);
+      return div;
+    }
+    return query;
+  }
+  return document.querySelector('.info.player2');
+}
+
 export function greeter() {
   const content = getContentDiv();
   const wrapper = document.createElement('div');
@@ -51,12 +66,57 @@ export function greeter() {
   content.appendChild(wrapper);
 }
 
-// eventListenerPlaceShip(player, length, dir) {
-//   const board = getPlayerBoard();
-//   board.querySelectorAll('.node').forEach(node => {
-//     // if (player.board.spaceAvailable(dir, length, [node.dataset.x, node.dataset.y]))
-//   })
-// }
+function setClassBoard(board, isCurrentPlayer) {
+  if (isCurrentPlayer) {
+    board.classList.add('board', 'player');
+  } else {
+    board.classList.add('board', 'opponent');
+  }
+}
+
+function setGridProperty(div, length) {
+  const elem = div;
+  elem.style.display = 'grid';
+  elem.style.setProperty('grid-template-rows', `repeat(${length}, 1fr)`);
+  elem.style.setProperty('grid-template-columns', `repeat(${length}, 1fr)`);
+}
+
+function setAxis(div, col, row) {
+  const element = div;
+  if (col === 0) {
+    element.innerText = String.fromCharCode(row + 64);
+  } else {
+    element.innerText = col;
+  }
+  element.classList.add('axis');
+}
+
+function setClassSquare(div, col, row) {
+  if (col === 0 || row === 0) {
+    setAxis(div, col, row);
+  } else {
+    const element = div;
+    element.dataset.x = String.fromCharCode(row + 64);
+    element.dataset.y = col;
+    element.classList.add('node');
+  }
+}
+
+function drawBoard(player, isCurrentPlayer) {
+  const playerWrapper = getPlayerWrapper(isCurrentPlayer);
+  const { length } = player.board.board;
+  const playerBoard = document.createElement('div');
+  setClassBoard(playerBoard, isCurrentPlayer);
+  setGridProperty(playerBoard, length + 1);
+  for (let col = 0; col < length + 1; col += 1) {
+    for (let row = 0; row < length + 1; row += 1) {
+      const square = document.createElement('div');
+      if (col !== 0 || row !== 0) setClassSquare(square, col, row);
+      playerBoard.appendChild(square);
+    }
+  }
+  playerWrapper.appendChild(playerBoard);
+}
 
 function mouseoverEvent(board, node, dir, length) {
   if (board.spaceAvailable(dir, length, node.dataset.x, node.dataset.y)) {
@@ -76,33 +136,35 @@ function shipButton(ship) {
 }
 
 export function showPlacement(player) {
-  let previousEvent = null;
-  let previousMouse = null;
+  drawBoard(player, true);
+  let previousBtnEvent = null;
+  let previousMouseEvent = null;
+  const content = getContentDiv();
+  const placementDiv = document.createElement('div');
+  const boardDiv = getPlayerBoard();
+  const { board } = player;
+  const ships = player.board.unplacedShips;
+
   function addPlacementEvent(dir, length) {
-    const boardDiv = getPlayerBoard();
-    const { board } = player;
-    const eventH = event => {
+    const eventMouseover = event => {
       if (event.target.className === 'node')
         mouseoverEvent(board, event.target, dir, length);
     };
-    if (previousMouse !== null) {
-      boardDiv.removeEventListener('mouseover', previousMouse);
+    if (previousMouseEvent !== null) {
+      boardDiv.removeEventListener('mouseover', previousMouseEvent);
     }
-    previousMouse = eventH;
-    boardDiv.addEventListener('mouseover', eventH);
+    previousMouseEvent = eventMouseover;
+    boardDiv.addEventListener('mouseover', eventMouseover);
   }
-  drawBoard(player, true);
-  const content = getContentDiv();
-  const placementDiv = document.createElement('div');
-  const ships = player.board.unplacedShips;
+
   ships.forEach(ship => {
     const shipBtn = shipButton(ship);
     const eventFunction = () => {
-      addPlacementEvent(player, ship.length, 'horizontal');
+      addPlacementEvent('horizontal', ship.length);
     };
-    if (previousEvent !== null)
-      shipBtn.removeEventListener('click', previousEvent);
-    previousEvent = eventFunction;
+    if (previousBtnEvent !== null)
+      shipBtn.removeEventListener('click', previousBtnEvent);
+    previousBtnEvent = eventFunction;
     shipBtn.addEventListener('click', eventFunction);
     placementDiv.appendChild(shipBtn);
   });
@@ -160,42 +222,6 @@ function renderShip(div, node) {
   element.innerText = ship.name.slice(0, 2);
 }
 
-function setGridProperty(div, length) {
-  const elem = div;
-  elem.style.display = 'grid';
-  elem.style.setProperty('grid-template-rows', `repeat(${length}, 1fr)`);
-  elem.style.setProperty('grid-template-columns', `repeat(${length}, 1fr)`);
-}
-
-function setAxis(div, col, row) {
-  const element = div;
-  if (col === 0) {
-    element.innerText = String.fromCharCode(row + 64);
-  } else {
-    element.innerText = col;
-  }
-  element.classList.add('axis');
-}
-
-function setClassSquare(div, col, row) {
-  if (col === 0 || row === 0) {
-    setAxis(div, col, row);
-  } else {
-    const element = div;
-    element.dataset.x = String.fromCharCode(row + 64);
-    element.dataset.y = col;
-    element.classList.add('node');
-  }
-}
-
-function setClassBoard(board, isCurrentPlayer) {
-  if (isCurrentPlayer) {
-    board.classList.add('board', 'player');
-  } else {
-    board.classList.add('board', 'opponent');
-  }
-}
-
 function setAttackClass(div, didHit) {
   if (didHit) {
     div.classList.add('hit');
@@ -244,21 +270,6 @@ function fillBoard(player, isCurrentPlayer) {
   });
 }
 
-function getPlayerWrapper(isCurrentPlayer) {
-  if (isCurrentPlayer) {
-    const query = document.querySelector('.info.player1');
-    if (query === null) {
-      const content = getContentDiv();
-      const div = document.createElement('div');
-      div.classList.add('info', 'player1');
-      content.appendChild(div);
-      return div;
-    }
-    return query;
-  }
-  return document.querySelector('.info.player2');
-}
-
 function updateName(player, isCurrentPlayer) {
   const playerWrapper = getPlayerWrapper(isCurrentPlayer);
   playerWrapper.querySelector('.name').innerText = player.name;
@@ -275,36 +286,6 @@ export function updateBoard(...players) {
       fillBoard(players[i], false);
     }
   }
-}
-
-function drawBoard(player, isCurrentPlayer) {
-  const playerWrapper = getPlayerWrapper(isCurrentPlayer);
-  const { length } = player.board.board;
-  const { board } = player;
-  const playerBoard = document.createElement('div');
-  setClassBoard(playerBoard, isCurrentPlayer);
-  setGridProperty(playerBoard, length + 1);
-  for (let col = 0; col < length + 1; col += 1) {
-    for (let row = 0; row < length + 1; row += 1) {
-      const square = document.createElement('div');
-      if (col !== 0 || row !== 0) setClassSquare(square, col, row);
-      // if (square.classList.contains('node')) {
-      //   const node = board.getNode(square.dataset.x, square.dataset.y);
-      //   if (node.beenHit) {
-      //     renderAttack(
-      //       square.dataset.x,
-      //       square.dataset.y,
-      //       node.hasShip(),
-      //       isCurrentPlayer,
-      //     );
-      //   } else if (node.hasShip() && isCurrentPlayer) {
-      //     renderShip(square, node);
-      //   }
-      // }
-      playerBoard.appendChild(square);
-    }
-  }
-  playerWrapper.appendChild(playerBoard);
 }
 
 function drawName(player, isCurrentPlayer) {
