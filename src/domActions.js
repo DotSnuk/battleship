@@ -51,6 +51,21 @@ export function greeter() {
   content.appendChild(wrapper);
 }
 
+// eventListenerPlaceShip(player, length, dir) {
+//   const board = getPlayerBoard();
+//   board.querySelectorAll('.node').forEach(node => {
+//     // if (player.board.spaceAvailable(dir, length, [node.dataset.x, node.dataset.y]))
+//   })
+// }
+
+function mouseoverEvent(board, node, dir, length) {
+  if (board.spaceAvailable(dir, length, node.dataset.x, node.dataset.y)) {
+    node.classList.add('placement-good');
+  } else {
+    node.classList.add('placement-bad');
+  }
+}
+
 function shipButton(ship) {
   const button = document.createElement('input');
   button.setAttribute('type', 'button');
@@ -61,12 +76,34 @@ function shipButton(ship) {
 }
 
 export function showPlacement(player) {
+  let previousEvent = null;
+  let previousMouse = null;
+  function addPlacementEvent(dir, length) {
+    const boardDiv = getPlayerBoard();
+    const { board } = player;
+    const eventH = event => {
+      if (event.target.className === 'node')
+        mouseoverEvent(board, event.target, dir, length);
+    };
+    if (previousMouse !== null) {
+      boardDiv.removeEventListener('mouseover', previousMouse);
+    }
+    previousMouse = eventH;
+    boardDiv.addEventListener('mouseover', eventH);
+  }
   drawBoard(player, true);
   const content = getContentDiv();
   const placementDiv = document.createElement('div');
   const ships = player.board.unplacedShips;
   ships.forEach(ship => {
     const shipBtn = shipButton(ship);
+    const eventFunction = () => {
+      addPlacementEvent(player, ship.length, 'horizontal');
+    };
+    if (previousEvent !== null)
+      shipBtn.removeEventListener('click', previousEvent);
+    previousEvent = eventFunction;
+    shipBtn.addEventListener('click', eventFunction);
     placementDiv.appendChild(shipBtn);
   });
   content.appendChild(placementDiv);

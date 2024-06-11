@@ -135,38 +135,33 @@ export default class Gameboard {
     return this.board[coords[0]][coords[1]];
   }
 
-  getNodes(dir, length, startArray) {
+  getNodes(dir, length, startX, startY) {
+    const coords = Gameboard.#translateCoords([startX, startY]);
     if (dir === 'vertical')
-      return this.board[startArray[0]].slice(
-        startArray[1],
-        startArray[1] + length,
-      );
-    const verticalArr = this.board.slice(startArray[0], startArray[0] + length);
-    const indxFromVertical = verticalArr.map(
-      subArray => subArray[startArray[1]],
-    );
+      return this.board[coords[0]].slice(coords[1], coords[1] + length);
+    const verticalArr = this.board.slice(coords[0], coords[0] + length);
+    const indxFromVertical = verticalArr.map(subArray => subArray[coords[1]]);
     return indxFromVertical;
   }
 
-  spaceAvailable(dir, length, startArray) {
-    const nodes = this.getNodes(dir, length, startArray);
+  spaceAvailable(dir, length, startX, startY) {
+    const coords = Gameboard.#translateCoords([startX, startY]);
+    const nodes = this.getNodes(dir, length, startX, startY);
     return (
-      this.#withinBounds(dir, length, startArray) &&
+      this.#withinBounds(dir, length, coords) &&
       nodes.every(node => node.ship === null)
     );
   }
 
   placeShip(id, dir, startX, startY) {
-    // throw error if listStartShips length === 0?
-    const coords = Gameboard.#translateCoords([startX, startY]);
     const ship = this.getUnplacedShip(id);
     if (ship === null) return false;
     const { length } = ship;
-    if (!this.spaceAvailable(dir, length, coords)) {
+    if (!this.spaceAvailable(dir, length, startX, startY)) {
       this.unplacedShips.push(ship);
       return false;
     }
-    const nodes = this.getNodes(dir, length, coords);
+    const nodes = this.getNodes(dir, length, startX, startY);
     this.listActiveShips.push(ship);
     nodes.forEach(node => {
       const nod = node;

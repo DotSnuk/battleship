@@ -51,6 +51,14 @@ input.ship {
   animation: pulse 1s ease-in 1;
 }
 
+.placement-good {
+  background-color: green;
+}
+
+.placement-bad {
+  background-color: red;
+}
+
 @keyframes pulse {
   0% {
     font-size: 16px;
@@ -92,7 +100,11 @@ input.ship {
   color: red;
 }
 
-.node {
+/* .node {
+  
+} */
+
+[class='node'] {
   font-size: 16px;
   display: flex;
   justify-content: center;
