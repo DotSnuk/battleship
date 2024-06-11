@@ -126,6 +126,14 @@ function mouseoverEvent(board, node, dir, length) {
   }
 }
 
+function mouseout(div) {
+  const classlist = div.classList;
+  const placementClass = Array.from(classlist).find(classname =>
+    classname.startsWith('placement'),
+  );
+  div.classList.remove(placementClass);
+}
+
 function shipButton(ship) {
   const button = document.createElement('input');
   button.setAttribute('type', 'button');
@@ -146,6 +154,9 @@ export function showPlacement(player) {
   const ships = player.board.unplacedShips;
 
   function addPlacementEvent(dir, length) {
+    const mouseoutEvent = event => {
+      mouseout(event.target);
+    };
     const eventMouseover = event => {
       if (event.target.className === 'node')
         mouseoverEvent(board, event.target, dir, length);
@@ -154,6 +165,7 @@ export function showPlacement(player) {
       boardDiv.removeEventListener('mouseover', previousMouseEvent);
     }
     previousMouseEvent = eventMouseover;
+    boardDiv.addEventListener('mouseout', mouseoutEvent);
     boardDiv.addEventListener('mouseover', eventMouseover);
   }
 
