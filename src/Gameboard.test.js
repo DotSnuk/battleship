@@ -14,7 +14,7 @@ describe('Gameboard', () => {
   });
 
   it('Try and place second ship, should collide', () => {
-    expect(board.placeShip(2, 'vertical', 'c', 1)).toBeFalsy();
+    expect(board.placeShip(2, 'vertical', 'C', 1)).toBeFalsy();
   });
 
   it('Try second ship again, shouldnt collide', () => {
@@ -26,7 +26,7 @@ describe('Gameboard', () => {
   });
 
   it('Place third ship', () => {
-    expect(board.placeShip(3, 'horizontal', 'c', 3)).toBeTruthy();
+    expect(board.placeShip(3, 'horizontal', 'C', 3)).toBeTruthy();
   });
 
   it('Take hit, should miss', () => {
@@ -43,6 +43,10 @@ describe('Gameboard', () => {
     board.receiveAttack('A', 1);
     const missedAttack = board.getMissedAttacks();
     expect(missedAttack.length).toBe(2);
+  });
+
+  it('Test getNode', () => {
+    expect(board.getNode('C', 2)).toBeInstanceOf(Node);
   });
 
   // it('Get all attacks', () => {

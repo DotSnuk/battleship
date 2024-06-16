@@ -8,12 +8,17 @@ export default class Gameboard {
     this.listActiveShips = [];
   }
 
+  static intToCoords(arr) {
+    return [String.fromCharCode(arr[0] + 65), arr[1] + 1];
+  }
+
   static #createBoard() {
     const boardArray = [];
     for (let x = 0; x < 10; x += 1) {
       const col = [];
       for (let y = 0; y < 10; y += 1) {
-        col.push(new Node());
+        const position = Gameboard.intToCoords([x, y]);
+        col.push(new Node(position[0], position[1]));
       }
       boardArray.push(col);
     }
@@ -56,10 +61,6 @@ export default class Gameboard {
     let y = arr[1];
     y -= 1;
     return [x, y];
-  }
-
-  static intToCoords(arr) {
-    return [String.fromCharCode(arr[0] + 65), arr[1] + 1];
   }
 
   #withinBounds(dir, length, startArray) {
@@ -131,18 +132,38 @@ export default class Gameboard {
   }
 
   getNode(x, y) {
-    const coords = Gameboard.#translateCoords([x, y]);
-    return this.board[coords[0]][coords[1]];
+    const flatBoard = this.board.flat();
+    const node = flatBoard.find(
+      nde => nde.x === x.toUpperCase() && nde.y === parseInt(y, 10),
+    );
+    return node;
   }
 
   getNodes(dir, length, startX, startY) {
-    const coords = Gameboard.#translateCoords([startX, startY]);
-    if (dir === 'vertical')
-      return this.board[coords[0]].slice(coords[1], coords[1] + length);
-    const verticalArr = this.board.slice(coords[0], coords[0] + length);
-    const indxFromVertical = verticalArr.map(subArray => subArray[coords[1]]);
-    return indxFromVertical;
+    const results = [];
+    let node;
+    for (let i = 0; i < length; i++) {
+      if (dir === 'horizontal') {
+        node = this.getNode(
+          String.fromCharCode(startX.charCodeAt(0) + i),
+          parseInt(startY, 10),
+        );
+      } else {
+        node = this.getNode(startX, parseInt(startY, 10) + i);
+      }
+      if (node !== undefined) results.push(node);
+    }
+    return results;
   }
+
+  // getNodes(dir, length, startX, startY) {
+  //   const coords = Gameboard.#translateCoords([startX, startY]);
+  //   if (dir === 'vertical')
+  //     return this.board[coords[0]].slice(coords[1], coords[1] + length);
+  //   const verticalArr = this.board.slice(coords[0], coords[0] + length);
+  //   const indxFromVertical = verticalArr.map(subArray => subArray[coords[1]]);
+  //   return indxFromVertical;
+  // }
 
   spaceAvailable(dir, length, startX, startY) {
     const coords = Gameboard.#translateCoords([startX, startY]);

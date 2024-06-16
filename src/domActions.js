@@ -118,12 +118,26 @@ function drawBoard(player, isCurrentPlayer) {
   playerWrapper.appendChild(playerBoard);
 }
 
+function getNodesShipPlacement(board, node, dir, length) {
+  return board.getNodes(dir, length, node.dataset.x, node.dataset.y);
+}
+
 function mouseoverEvent(board, node, dir, length) {
+  const nodes = getNodesShipPlacement(board, node, dir, length);
+  let classToAdd;
   if (board.spaceAvailable(dir, length, node.dataset.x, node.dataset.y)) {
-    node.classList.add('placement-good');
+    // node.classList.add('placement-good');
+    classToAdd = 'placement-good';
   } else {
-    node.classList.add('placement-bad');
+    // node.classList.add('placement-bad');
+    classToAdd = 'placement-bad';
   }
+  nodes.forEach(nde => {
+    const element = document.querySelector(
+      `[data-x='${nde.x}'][data-y='${nde.y}']`,
+    );
+    element.classList.add(classToAdd);
+  });
 }
 
 function mouseout(div) {
@@ -131,7 +145,10 @@ function mouseout(div) {
   const placementClass = Array.from(classlist).find(classname =>
     classname.startsWith('placement'),
   );
-  div.classList.remove(placementClass);
+  const divs = document.querySelectorAll(`.${placementClass}`);
+  divs.forEach(element => {
+    element.classList.remove(placementClass);
+  });
 }
 
 function shipButton(ship) {

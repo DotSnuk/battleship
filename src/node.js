@@ -1,5 +1,7 @@
 export default class Node {
-  constructor() {
+  constructor(x, y) {
+    this.x = x;
+    this.y = y;
     this.ship = null;
     this.beenHit = false;
   }
