@@ -126,10 +126,8 @@ function mouseoverEvent(board, node, dir, length) {
   const nodes = getNodesShipPlacement(board, node, dir, length);
   let classToAdd;
   if (board.spaceAvailable(dir, length, node.dataset.x, node.dataset.y)) {
-    // node.classList.add('placement-good');
     classToAdd = 'placement-good';
   } else {
-    // node.classList.add('placement-bad');
     classToAdd = 'placement-bad';
   }
   nodes.forEach(nde => {
@@ -163,7 +161,7 @@ function shipButton(ship) {
 export function showPlacement(player) {
   drawBoard(player, true);
   let previousBtnEvent = null;
-  let previousMouseEvent = null;
+  let previousEventMouseover = null;
   const content = getContentDiv();
   const placementDiv = document.createElement('div');
   const boardDiv = getPlayerBoard();
@@ -171,18 +169,18 @@ export function showPlacement(player) {
   const ships = player.board.unplacedShips;
 
   function addPlacementEvent(dir, length) {
-    const mouseoutEvent = event => {
+    const eventMouseout = event => {
       mouseout(event.target);
     };
     const eventMouseover = event => {
       if (event.target.className === 'node')
         mouseoverEvent(board, event.target, dir, length);
     };
-    if (previousMouseEvent !== null) {
-      boardDiv.removeEventListener('mouseover', previousMouseEvent);
+    if (previousEventMouseover !== null) {
+      boardDiv.removeEventListener('mouseover', previousEventMouseover);
     }
-    previousMouseEvent = eventMouseover;
-    boardDiv.addEventListener('mouseout', mouseoutEvent);
+    previousEventMouseover = eventMouseover;
+    boardDiv.addEventListener('mouseout', eventMouseout);
     boardDiv.addEventListener('mouseover', eventMouseover);
   }
 
