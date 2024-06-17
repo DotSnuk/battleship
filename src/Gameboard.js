@@ -142,7 +142,7 @@ export default class Gameboard {
   getNodes(dir, length, startX, startY) {
     const results = [];
     let node;
-    for (let i = 0; i < length; i++) {
+    for (let i = 0; i < length; i += 1) {
       if (dir === 'horizontal') {
         node = this.getNode(
           String.fromCharCode(startX.charCodeAt(0) + i),

@@ -122,6 +122,18 @@ function getNodesShipPlacement(board, node, dir, length) {
   return board.getNodes(dir, length, node.dataset.x, node.dataset.y);
 }
 
+function clickEvent(board, ship, dir, x, y) {
+  if (board.placeShip(ship.id, dir, x, y)) {
+    const nodes = board.getNodes(dir, ship.length, x, y);
+    nodes.forEach(node => {
+      const element = document.querySelector(
+        `[data-x='${node.x}'][data-y='${node.y}']`,
+      );
+      element.classList.add('placed');
+    });
+  }
+}
+
 function mouseoverEvent(board, node, dir, length) {
   const nodes = getNodesShipPlacement(board, node, dir, length);
   let classToAdd;
@@ -162,32 +174,69 @@ export function showPlacement(player) {
   drawBoard(player, true);
   let previousBtnEvent = null;
   let previousEventMouseover = null;
+  let previousClickEvent = null;
+  const direction = 'horizontal';
   const content = getContentDiv();
   const placementDiv = document.createElement('div');
   const boardDiv = getPlayerBoard();
   const { board } = player;
   const ships = player.board.unplacedShips;
 
-  function addPlacementEvent(dir, length) {
+  function addHoverEvent(dir, ship) {
     const eventMouseout = event => {
       mouseout(event.target);
     };
     const eventMouseover = event => {
       if (event.target.className === 'node')
-        mouseoverEvent(board, event.target, dir, length);
+        mouseoverEvent(board, event.target, dir, ship.length);
+    };
+    const eventClickFunction = event => {
+      if (event.target.classList.contains('node')) {
+        clickEvent(
+          board,
+          ship,
+          direction,
+          event.target.dataset.x,
+          event.target.dataset.y,
+        );
+      }
     };
     if (previousEventMouseover !== null) {
       boardDiv.removeEventListener('mouseover', previousEventMouseover);
     }
+    if (previousClickEvent !== null) {
+      boardDiv.removeEventListener('click', previousClickEvent);
+    }
     previousEventMouseover = eventMouseover;
+    previousClickEvent = eventClickFunction;
     boardDiv.addEventListener('mouseout', eventMouseout);
     boardDiv.addEventListener('mouseover', eventMouseover);
+    boardDiv.addEventListener('click', eventClickFunction);
+  }
+
+  function addClickEvent(id) {
+    const eventClick = event => {
+      if (event.target.className === 'node') {
+        console.log(`${id} ${event.target.dataset.x}`);
+        clickEvent(
+          id,
+          direction,
+          event.target.dataset.x,
+          event.target.dataset.y,
+        );
+      }
+    };
+
+    if (previousClickEvent !== null)
+      boardDiv.removeEventListener('click', eventClick);
+    previousClickEvent = eventClick;
+    boardDiv.addEventListener('click', eventClick);
   }
 
   ships.forEach(ship => {
     const shipBtn = shipButton(ship);
     const eventFunction = () => {
-      addPlacementEvent('horizontal', ship.length);
+      addHoverEvent(direction, ship);
     };
     if (previousBtnEvent !== null)
       shipBtn.removeEventListener('click', previousBtnEvent);
