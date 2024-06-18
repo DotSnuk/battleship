@@ -66,6 +66,12 @@ function addNodeListeners() {
   );
 }
 
+async function startPlacement() {
+  await dom.showPlacement(players[0]);
+  dom.clearContent();
+  dom.showPlacement(players[1]);
+}
+
 const begin = document.getElementById('begin');
 begin.addEventListener('click', () => {
   for (let i = 0; i < 2; i += 1) {
@@ -85,7 +91,8 @@ begin.addEventListener('click', () => {
     // players[i].board.prePlaceShips();
   }
   dom.clearContent();
-  dom.showPlacement(players[0]);
+  startPlacement();
+  // dom.showPlacement(players[0]);
   // dom.drawPlayers(getPlayer(), getOpponent());
   // addNodeListeners();
 });

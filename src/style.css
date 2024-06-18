@@ -45,6 +45,9 @@ input.ship {
   &:active {
     background-color: gray;
   }
+  &.clicked {
+    background-color: darkgray;
+  }
 }
 
 .animateAttack {

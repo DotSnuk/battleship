@@ -122,6 +122,12 @@ function getNodesShipPlacement(board, node, dir, length) {
   return board.getNodes(dir, length, node.dataset.x, node.dataset.y);
 }
 
+function updateButton(shipID) {
+  const button = document.querySelector(`input.ship[data-id='${shipID}']`);
+  button.classList.add('clicked');
+  button.disabled = true;
+}
+
 function clickEvent(board, ship, dir, x, y) {
   if (board.placeShip(ship.id, dir, x, y)) {
     const nodes = board.getNodes(dir, ship.length, x, y);
@@ -131,6 +137,8 @@ function clickEvent(board, ship, dir, x, y) {
       );
       element.classList.add('placed');
     });
+    updateButton(ship.id);
+    // check array size
   }
 }
 
@@ -153,7 +161,7 @@ function mouseoverEvent(board, node, dir, length) {
 function mouseout(div) {
   const classlist = div.classList;
   const placementClass = Array.from(classlist).find(classname =>
-    classname.startsWith('placement'),
+    classname.startsWith('placement-'),
   );
   const divs = document.querySelectorAll(`.${placementClass}`);
   divs.forEach(element => {
@@ -170,6 +178,33 @@ function shipButton(ship) {
   return button;
 }
 
+// function createPlacementElements(player) {
+//   const content = getContentDiv();
+//   const placementDiv = document.createElement('div');
+//   const btnContainer = document.createElement('div');
+//   const boardDiv = getPlayerBoard();
+//   const { board } = player;
+//   const ships = board.unplacedShips;
+//   const readyBtn = document.createElement('input');
+//   placementDiv.classList.add('info', 'placement');
+//   btnContainer.classList.add('container', 'button');
+//   readyBtn.value = 'Ready';
+//   readyBtn.setAttribute('type', 'button');
+//   readyBtn.id = 'ready';
+
+//   ships.forEach(ship => {
+//     const shipBtn = shipButton(ship);
+//     const eventFunction = () => {
+//       addHoverEvent(direction, ship);
+//     };
+//     if (previousBtnEvent !== null)
+//       shipBtn.removeEventListener('click', previousBtnEvent);
+//     previousBtnEvent = eventFunction;
+//     shipBtn.addEventListener('click', eventFunction);
+//     btnContainer.appendChild(shipBtn);
+//   });
+// }
+
 export function showPlacement(player) {
   drawBoard(player, true);
   let previousBtnEvent = null;
@@ -178,9 +213,16 @@ export function showPlacement(player) {
   const direction = 'horizontal';
   const content = getContentDiv();
   const placementDiv = document.createElement('div');
+  const btnContainer = document.createElement('div');
   const boardDiv = getPlayerBoard();
   const { board } = player;
   const ships = player.board.unplacedShips;
+  const readyBtn = document.createElement('input');
+  placementDiv.classList.add('info', 'placement');
+  btnContainer.classList.add('container', 'button');
+  readyBtn.value = 'Ready';
+  readyBtn.setAttribute('type', 'button');
+  readyBtn.id = 'ready';
 
   function addHoverEvent(dir, ship) {
     const eventMouseout = event => {
@@ -214,25 +256,6 @@ export function showPlacement(player) {
     boardDiv.addEventListener('click', eventClickFunction);
   }
 
-  function addClickEvent(id) {
-    const eventClick = event => {
-      if (event.target.className === 'node') {
-        console.log(`${id} ${event.target.dataset.x}`);
-        clickEvent(
-          id,
-          direction,
-          event.target.dataset.x,
-          event.target.dataset.y,
-        );
-      }
-    };
-
-    if (previousClickEvent !== null)
-      boardDiv.removeEventListener('click', eventClick);
-    previousClickEvent = eventClick;
-    boardDiv.addEventListener('click', eventClick);
-  }
-
   ships.forEach(ship => {
     const shipBtn = shipButton(ship);
     const eventFunction = () => {
@@ -242,10 +265,23 @@ export function showPlacement(player) {
       shipBtn.removeEventListener('click', previousBtnEvent);
     previousBtnEvent = eventFunction;
     shipBtn.addEventListener('click', eventFunction);
-    placementDiv.appendChild(shipBtn);
+    btnContainer.appendChild(shipBtn);
   });
+
+  placementDiv.appendChild(btnContainer);
+  placementDiv.appendChild(readyBtn);
   content.appendChild(placementDiv);
+  return new Promise(resolve => {
+    const readyClick = () => {
+      resolve();
+    };
+    readyBtn.addEventListener('click', readyClick);
+  });
 }
+
+// export function initPlacement(playerOne, playerTwo) {
+//   // create element
+// }
 
 export function playerWins(player) {
   const div = document.createElement('div');
