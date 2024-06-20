@@ -122,6 +122,23 @@ function getNodesShipPlacement(board, node, dir, length) {
   return board.getNodes(dir, length, node.dataset.x, node.dataset.y);
 }
 
+function createPlacementDivs() {
+  const content = getContentDiv();
+  const placementDiv = document.createElement('div');
+  const btnContainer = document.createElement('div');
+  const readyBtn = document.createElement('input');
+
+  placementDiv.classList.add('info', 'placement');
+  btnContainer.classList.add('container', 'button');
+  readyBtn.value = 'Ready';
+  readyBtn.setAttribute('type', 'button');
+  readyBtn.id = 'ready';
+
+  placementDiv.appendChild(btnContainer);
+  placementDiv.appendChild(readyBtn);
+  content.appendChild(placementDiv);
+}
+
 function updateButton(shipID) {
   const button = document.querySelector(`input.ship[data-id='${shipID}']`);
   button.classList.add('clicked');
@@ -178,103 +195,70 @@ function shipButton(ship) {
   return button;
 }
 
-// function createPlacementElements(player) {
-//   const content = getContentDiv();
-//   const placementDiv = document.createElement('div');
-//   const btnContainer = document.createElement('div');
-//   const boardDiv = getPlayerBoard();
-//   const { board } = player;
-//   const ships = board.unplacedShips;
-//   const readyBtn = document.createElement('input');
-//   placementDiv.classList.add('info', 'placement');
-//   btnContainer.classList.add('container', 'button');
-//   readyBtn.value = 'Ready';
-//   readyBtn.setAttribute('type', 'button');
-//   readyBtn.id = 'ready';
-
-//   ships.forEach(ship => {
-//     const shipBtn = shipButton(ship);
-//     const eventFunction = () => {
-//       addHoverEvent(direction, ship);
-//     };
-//     if (previousBtnEvent !== null)
-//       shipBtn.removeEventListener('click', previousBtnEvent);
-//     previousBtnEvent = eventFunction;
-//     shipBtn.addEventListener('click', eventFunction);
-//     btnContainer.appendChild(shipBtn);
-//   });
-// }
+function eventHandler(dir, ship, board, eventsObj) {
+  const boardDiv = getPlayerBoard();
+  const events = eventsObj;
+  const eventMouseout = event => {
+    mouseout(event.target);
+  };
+  const eventMouseover = event => {
+    if (event.target.className === 'node')
+      mouseoverEvent(board, event.target, dir, ship.length);
+  };
+  const eventClickFunction = event => {
+    if (event.target.classList.contains('node')) {
+      clickEvent(
+        board,
+        ship,
+        dir,
+        event.target.dataset.x,
+        event.target.dataset.y,
+      );
+    }
+  };
+  if (events.previousMouseover !== null) {
+    boardDiv.removeEventListener('mouseover', events.previousMouseover);
+  }
+  if (events.previousClick !== null) {
+    boardDiv.removeEventListener('click', events.previousClick);
+  }
+  events.previousMouseover = eventMouseover;
+  events.previousClick = eventClickFunction;
+  boardDiv.addEventListener('mouseout', eventMouseout);
+  boardDiv.addEventListener('mouseover', eventMouseover);
+  boardDiv.addEventListener('click', eventClickFunction);
+}
 
 export function showPlacement(player) {
   drawBoard(player, true);
-  let previousBtnEvent = null;
-  let previousEventMouseover = null;
-  let previousClickEvent = null;
+  createPlacementDivs();
+  const events = {
+    previousBtnClick: null,
+    previousMouseover: null,
+    previousClick: null,
+  };
   const direction = 'horizontal';
-  const content = getContentDiv();
-  const placementDiv = document.createElement('div');
-  const btnContainer = document.createElement('div');
-  const boardDiv = getPlayerBoard();
+  const btnContainer = document.querySelector('.button.container');
   const { board } = player;
-  const ships = player.board.unplacedShips;
-  const readyBtn = document.createElement('input');
-  placementDiv.classList.add('info', 'placement');
-  btnContainer.classList.add('container', 'button');
-  readyBtn.value = 'Ready';
-  readyBtn.setAttribute('type', 'button');
-  readyBtn.id = 'ready';
-
-  function addHoverEvent(dir, ship) {
-    const eventMouseout = event => {
-      mouseout(event.target);
-    };
-    const eventMouseover = event => {
-      if (event.target.className === 'node')
-        mouseoverEvent(board, event.target, dir, ship.length);
-    };
-    const eventClickFunction = event => {
-      if (event.target.classList.contains('node')) {
-        clickEvent(
-          board,
-          ship,
-          direction,
-          event.target.dataset.x,
-          event.target.dataset.y,
-        );
-      }
-    };
-    if (previousEventMouseover !== null) {
-      boardDiv.removeEventListener('mouseover', previousEventMouseover);
-    }
-    if (previousClickEvent !== null) {
-      boardDiv.removeEventListener('click', previousClickEvent);
-    }
-    previousEventMouseover = eventMouseover;
-    previousClickEvent = eventClickFunction;
-    boardDiv.addEventListener('mouseout', eventMouseout);
-    boardDiv.addEventListener('mouseover', eventMouseover);
-    boardDiv.addEventListener('click', eventClickFunction);
-  }
+  const ships = board.unplacedShips;
 
   ships.forEach(ship => {
     const shipBtn = shipButton(ship);
     const eventFunction = () => {
-      addHoverEvent(direction, ship);
+      eventHandler(direction, ship, board, events);
     };
-    if (previousBtnEvent !== null)
-      shipBtn.removeEventListener('click', previousBtnEvent);
-    previousBtnEvent = eventFunction;
+    if (events.previousBtnClick !== null)
+      shipBtn.removeEventListener('click', events.previousBtnClick);
+    events.previousBtnClick = eventFunction;
     shipBtn.addEventListener('click', eventFunction);
     btnContainer.appendChild(shipBtn);
   });
 
-  placementDiv.appendChild(btnContainer);
-  placementDiv.appendChild(readyBtn);
-  content.appendChild(placementDiv);
   return new Promise(resolve => {
     const readyClick = () => {
       resolve();
     };
+    const readyBtn = document.getElementById('ready');
     readyBtn.addEventListener('click', readyClick);
   });
 }
