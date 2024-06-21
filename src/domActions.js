@@ -126,15 +126,21 @@ function createPlacementDivs() {
   const content = getContentDiv();
   const placementDiv = document.createElement('div');
   const btnContainer = document.createElement('div');
+  const rotateBtn = document.createElement('input');
   const readyBtn = document.createElement('input');
 
   placementDiv.classList.add('info', 'placement');
   btnContainer.classList.add('container', 'button');
+  rotateBtn.value = 'Rotate ship';
+  rotateBtn.setAttribute('type', 'button');
+  rotateBtn.id = 'rotate';
   readyBtn.value = 'Ready';
   readyBtn.setAttribute('type', 'button');
   readyBtn.id = 'ready';
+  readyBtn.disabled = true;
 
   placementDiv.appendChild(btnContainer);
+  placementDiv.appendChild(rotateBtn);
   placementDiv.appendChild(readyBtn);
   content.appendChild(placementDiv);
 }
@@ -143,6 +149,10 @@ function updateButton(shipID) {
   const button = document.querySelector(`input.ship[data-id='${shipID}']`);
   button.classList.add('clicked');
   button.disabled = true;
+}
+
+function checkReady(board) {
+  if (board.allShipsPlaced()) document.getElementById('ready').disabled = false;
 }
 
 function clickEvent(board, ship, dir, x, y) {
@@ -155,7 +165,7 @@ function clickEvent(board, ship, dir, x, y) {
       element.classList.add('placed');
     });
     updateButton(ship.id);
-    // check array size
+    checkReady(board);
   }
 }
 
@@ -195,9 +205,16 @@ function shipButton(ship) {
   return button;
 }
 
-function eventHandler(dir, ship, board, eventsObj) {
+function toggleRotate(rotation) {
+  if (rotation === 'horizontal') return 'vertical';
+  return 'horizontal';
+}
+
+function eventHandler(ship, board, eventsObj, direction) {
   const boardDiv = getPlayerBoard();
   const events = eventsObj;
+  const rotateBtn = document.getElementById('rotate');
+  let dir = direction;
   const eventMouseout = event => {
     mouseout(event.target);
   };
@@ -216,6 +233,9 @@ function eventHandler(dir, ship, board, eventsObj) {
       );
     }
   };
+  const rotate = () => {
+    dir = toggleRotate(dir);
+  };
   if (events.previousMouseover !== null) {
     boardDiv.removeEventListener('mouseover', events.previousMouseover);
   }
@@ -227,6 +247,7 @@ function eventHandler(dir, ship, board, eventsObj) {
   boardDiv.addEventListener('mouseout', eventMouseout);
   boardDiv.addEventListener('mouseover', eventMouseover);
   boardDiv.addEventListener('click', eventClickFunction);
+  rotateBtn.addEventListener('click', rotate);
 }
 
 export function showPlacement(player) {
@@ -245,7 +266,7 @@ export function showPlacement(player) {
   ships.forEach(ship => {
     const shipBtn = shipButton(ship);
     const eventFunction = () => {
-      eventHandler(direction, ship, board, events);
+      eventHandler(ship, board, events, direction);
     };
     if (events.previousBtnClick !== null)
       shipBtn.removeEventListener('click', events.previousBtnClick);

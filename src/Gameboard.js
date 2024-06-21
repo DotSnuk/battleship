@@ -37,6 +37,11 @@ export default class Gameboard {
     return arrayShips;
   }
 
+  allShipsPlaced() {
+    if (this.unplacedShips.length === 0) return true;
+    return false;
+  }
+
   getUnplacedShip(id) {
     const removeIndex = this.unplacedShips.map(ship => ship.id).indexOf(id);
     if (removeIndex === -1) return null;
