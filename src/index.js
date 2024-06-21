@@ -66,10 +66,18 @@ function addNodeListeners() {
   );
 }
 
+function startGame() {
+  dom.drawPlayers(getPlayer(), getOpponent());
+  dom.updateBoard(getPlayer(), getOpponent());
+  addNodeListeners();
+}
+
 async function startPlacement() {
   await dom.showPlacement(players[0]);
   dom.clearContent();
-  dom.showPlacement(players[1]);
+  await dom.showPlacement(players[1]);
+  dom.clearContent();
+  startGame();
 }
 
 const begin = document.getElementById('begin');
